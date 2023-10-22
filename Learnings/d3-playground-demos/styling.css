@@ -1,0 +1,24 @@
+.x-axis line,
+.y-axis line,
+.x-axis path,
+.y-axis path {
+  shape-rendering: crispEdges;
+  stroke: black;
+  fill: none;
+}
+
+.x-axis text,
+.y-axis text {
+  font-size: 12px;
+}
+
+
+
+ svg {
+    display: block;
+    width: 70%;
+    border: black solid;
+    padding: 15px;
+
+    margin: auto;
+ }

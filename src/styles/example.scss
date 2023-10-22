@@ -1,6 +1,37 @@
 $color: purple;
 
+body {
+    display: flex;
+    justify-content: center;
+}
+
 #main {
-    border: 4px solid $color;
-    padding: 20px;
+    // border: 4px solid $color;
+    // padding: 20px;
+    display: flex;
+    flex-direction: column;
+    // justify-content: center;
+    // flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    // align-items: flex-end;
+    // align-items: center;
+    // border: 1px solid black;
+    // background-color: lightblue;
+    // z-index: 6;
+    // width: 300px;
+    position: relative;
+    margin-top: 25px;
+    // margin-left: 35%;
+    
+}
+
+
+.axis path, .axis line {
+    fill: none;
+    shape-rendering: crispEdges
+}
+
+.axis text {
+    font-size: 12px;
 }

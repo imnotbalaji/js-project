@@ -1,14 +1,16 @@
-import Example from "./scripts/example";
+import Chart from "./scripts/chart";
+import View from "./scripts/view";
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("Hello from Index.js");
+    
+    
 
-    const main = document.getElementById("main")
+    d3.select("body")
+    .style("background-image","url('./images/island.png')");
 
-    new Example(main);
 
-
+    new View();
 
 
 })
