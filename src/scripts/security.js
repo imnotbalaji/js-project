@@ -1,35 +1,41 @@
 class Security {
     constructor(ticker){
-        // debugger
+        
         this.ticker = ticker;
         this.data =  [30,80,45, 60, 121, 90, 15];   
     }
     async get_data(){
-        // debugger
-        // const res = await fetch("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&apikey=demo")
-        // console.log(this.ticker);
-        // const raw_data =  await d3.json("./test_data/test_data.json");
-        // const time_series = raw_data["Time Series (Daily)"];
-        // let data_array = Object.keys(time_series).map(key => ({name: key, open: parseFloat(time_series[key]["1. open"])}));
-        // let data = this.generateRandomArray(100, 100,200);
-        // let data_array2 = data.map((ele)=> ({name: `${ele}`, open: ele}));
-        // debugger
+        
+        
 
-        let data_array3 =  this.generateRandomData();
-        console.log(data_array3);
-        // debugger
-        return data_array3;
+        // We need this for the url fetching 
+        // let url = this.url_maker();
+        // const res = await fetch(url);
+        // const raw_data = await res.json();
+        const raw_data =  await d3.json('./test_data/IBM_daily_full.json');
+        
+        // console.log(raw_data);
+        const time_series = raw_data["Time Series (Daily)"];
+        let data_array = Object.keys(time_series).map(key => ({timestamp: key, value: parseFloat(time_series[key]["1. open"])}));
+
+        return data_array;
     
     }
 
-    generateRandomArray(num, min, max) {
-        var randomArray = [];
-        for (var i = 0; i < num; i++) {
-            var randomNum = Math.random() * (max - min) + min;
-            randomArray.push(randomNum);
-        }
-        return randomArray;
+
+
+    url_maker(){
+        let url = "https://www.alphavantage.co/query?"
+        let func = "TIME_SERIES_DAILY";
+        let symbol = this.ticker;
+        // let interval = "60min"
+        let output_size = "full"
+        let apikey = "MHTLO8QSWV47YWUG";
+
+        // return url+"function="+func+"&symbol="+symbol+"&interval="+interval+"&apikey="+apikey;
+        return url+"function="+func+"&symbol="+symbol+"&outputsize="+output_size+"&apikey="+apikey;
     }
+    
 
     generateRandomData(){
         const data = []

@@ -8,3 +8,6 @@ MHTLO8QSWV47YWUG
         // output size =  compact 
         //full retunrs training 30 days of the most recent data 
         // // datatype = csv``
+
+
+        // const raw_data =  await d3.json("./test_data/test_data.json");

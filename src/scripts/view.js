@@ -51,26 +51,15 @@ class View {
     }
 
     handle_enter(event){
-        // const main = d3.select("#main"); 
         let main = this.main;
         let svg = this.svg;
-
-
         if (event.key === "Enter") {    
-            // d3.select("svg").remove();
-            // const svg = main.append("svg")
-            // .style("margin","50px")
-            // .attr("width","200px")
-            // .attr("height","200px");
             const ticker = d3.select(event.target).property("value");
-     
-            // debugger
             const stock = new Security(ticker);
-            // debugger
-            // stock.get_data();
-            new Chart(stock,svg)
+            main.append("button").text("Zoom In").on("click", () => console.log("zoom in"));
+            main.append("button").text("Zoom Out").on("click", () => console.log("zoom out"));
+            new Chart(stock,svg);
         }
-        
     }
 
 }

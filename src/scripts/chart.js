@@ -1,7 +1,7 @@
 class Chart {
 
     constructor(stock,svg) {
-     
+        
         this.data = stock.data;
         stock.get_data().then((data_array)=> {
             // this.render_bar(data_array,svg);
@@ -13,6 +13,8 @@ class Chart {
 
     render_bar (data,svg){
            
+
+
         const xScale = d3.scaleBand()
                          .domain(data.map(d => d.name))
                          .range([0,200]);
@@ -82,9 +84,11 @@ class Chart {
  
     render_line(data,svg){
         
-        const formatTime = d3.timeFormat("%H");
+        const formatTime = d3.timeFormat("%m-%y");
         const svg_width = svg.node().clientWidth;
         const svg_height = svg.node().clientHeight;
+
+        data.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
 
 
 
@@ -99,54 +103,37 @@ class Chart {
         const line = d3.line()
                        .x(d=>xScale(new Date(d.timestamp)))
                        .y(d=>yScale(d.value))
-                    //    .curve(d3.curveBasis);
+                    
 
         // Testing out some filter/ drop shadow effects 
 
         const existingFilter = svg.select("#shadow");
-if (existingFilter.empty()) {
-    // Create the filter definition and append it to the SVG
-    const filter = svg.append("defs")
-      .append("filter")
-        .attr("id", "shadow")
-        .attr("x", 0)
-        .attr("y", 0);
+        if (existingFilter.empty()) {
+        // Create the filter definition and append it to the SVG
+            const filter = svg.append("defs")
+                              .append("filter")
+                              .attr("id", "shadow")
+        
 
-    // Add a Gaussian blur to the filter
-    filter.append("feGaussianBlur")
-        .attr("in", "off0ut")
-        .attr("stdDeviation", 4)
-        .attr("result", "blurOut");
-
-    // Offset the blur to create the shadow effect
     filter.append("feOffset")
         .attr("in", "SourceGraphic")
         .attr("dx", 0)
-        .attr("dy", 4)
+        .attr("dy", 10)
         .attr("result", "offOut");
 
-    // Merge the offset blurred image with the original graphic
-    // const feMerge = filter.append("feMerge");
+        filter.append("feGaussianBlur")
+        .attr("in", "off0ut")
+        .attr("stdDeviation", 10)
+        .attr("result", "blurOut");
 
-    // feMerge.append("feMergeNode")
-    //     .attr("in", "offsetblur");
-        
-    // feMerge.append("feMergeNode")
-    //     .attr("in", "SourceGraphic");
+
     filter   .append("feBlend")
              .attr("in", "SourceGraphic")
             .attr("in2", "blurOut")
             .attr("mode", "normal");
 }
 
-// Assume you have selected your line or path
-// const line = svg.select("path");  // or select your line if it's a line
 
-// Apply the filter using the filter attribute
-// line.attr("filter", "url(#shadow)");
-
-
-    // -------
 
         let path = svg.select("path");
 
@@ -174,26 +161,55 @@ if (existingFilter.empty()) {
         const xAxis = d3.axisBottom(xScale)
                         .tickFormat(d=>formatTime(d))
 
-        const yAxis = d3.axisLeft(yScale);
+        const yAxis = d3.axisRight(yScale);
 
-        svg.append("g")
-        .attr("class","x-axis")
-        .attr("transform", "translate(0," + svg_height + ")")
-        .transition()
-        .duration(1000)
-        .call(xAxis);
+        // const yAxisGrid = d3.axisLeft(yScale)
+        //                     .tickSize(-svg_width)
+        //                     .tickFormat("");
+
+
+        // svg.append("g")
+        // .attr("class","x-axis")
+        // .attr("transform", "translate(0," + svg_height + ")")
+        // .transition()
+        // .duration(1000)
+        // .call(xAxis);
+
+        // test method to try out axis transitions 
+
+        let xAxisgroup = svg.select(".x-axis");
+
+        if (xAxisgroup.empty()){
+            xAxisgroup = svg.append("g")
+                            .attr("class","x-axis")
+                            .attr("transform", "translate(0,"+svg_height+")")
+        }
+
+        xAxisgroup.transition()
+                  .duration(1000)
+                  .call(xAxis);
 
 
         let yAxisgroup = svg.select(".y-axis");
         if (yAxisgroup.empty()) {
             yAxisgroup = svg.append("g")
-                            .attr("class","y-axis");
-            // .attr("transform","translate(0,-20)")
+                            .attr("class","y-axis")
+            .attr("transform","translate("+svg_width+",0)");
         }
 
-        yAxisgroup.transition(0)
+        yAxisgroup.transition()
                   .duration(1000)
                   .call(yAxis);
+
+
+        // svg.append("g")
+        //     .attr("class","grid")
+        //     .call(yAxisGrid);
+
+        //     svg.select(".grid")
+        //      .style("stroke","grey")
+        //     .style("stroke-opacity",0.7)
+        //     .style("shape-rendering","crispEdges");
       
 
         const hoverCircle = svg.append('circle')
@@ -228,10 +244,12 @@ if (existingFilter.empty()) {
          
             const date = xScale.invert(mx);      // Invert the x-scale to get the date
         
-            const bisectDate = d3.bisector(d=> new Date(d.timestamp)).right;
+            const bisectDate = d3.bisector(d=> new Date(d.timestamp)).left;
 
             const index = bisectDate(data,date);
             const closestDataPoint = data[index];
+
+            console.log(closestDataPoint);
             
             hoverCircle.attr('cx', xScale(new Date(closestDataPoint.timestamp)))
                        .attr('cy',yScale(closestDataPoint.value));
@@ -239,30 +257,11 @@ if (existingFilter.empty()) {
                      .attr('x2',xScale(new Date(closestDataPoint.timestamp)))
                      .attr('y1',yScale(0))
                      .attr('y2',yScale(closestDataPoint.value))
-                    //  .attr('y2',yScale(closestDataPoint.value));
+                    
             hoverText.attr('x',xScale(new Date(closestDataPoint.timestamp))) 
                      .attr('y',yScale(closestDataPoint.value) -10)
                      .text(closestDataPoint.value);
             
-            
-            // // const value = closestDataPoint ? closestDataPoint.value : null;
-
-            // if (my >= yScale(closestDataPoint.value)) {
-            //     const value = closestDataPoint.value;
-            //     // hoverCircle.attr('cx', mx).attr('cy', yScale(value));
-            //     // hoverCircle.attr('cx', xScale(new Date(closestDataPoint.timestamp)))
-            //         // .attr('cy', yScale(closestDataPoint.value) )
-            //         // .style('visibility', 'visible');
-            
-
-            // }
-
-           
-            
-
-            // // formatTime(new Date(date))
-            
-
         }
 
         function onMouseOut(){
