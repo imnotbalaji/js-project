@@ -35,3 +35,14 @@ body {
 .axis text {
     font-size: 12px;
 }
+
+
+#zoom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 50px;
+    gap: 15px;
+  
+   }

@@ -22,3 +22,10 @@
 
     margin: auto;
  }
+
+ div#zoom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+ }
