@@ -1,18 +1,20 @@
 class Security {
     constructor(ticker){
-        
+        console.log(ticker);
         this.ticker = ticker;
         this.data =  [30,80,45, 60, 121, 90, 15];   
     }
     async get_data(){
         
-        
+        // debugger;
 
         // We need this for the url fetching 
-        // let url = this.url_maker();
-        // const res = await fetch(url);
-        // const raw_data = await res.json();
-        const raw_data =  await d3.json('./test_data/IBM_daily_full.json');
+        let url = this.url_maker();
+        console.log(url);
+        const res = await fetch(url);
+        const raw_data = await res.json();
+        
+        // const raw_data =  await d3.json('./test_data/IBM_daily_full.json');
         
         // console.log(raw_data);
         const time_series = raw_data["Time Series (Daily)"];
@@ -27,10 +29,11 @@ class Security {
     url_maker(){
         let url = "https://www.alphavantage.co/query?"
         let func = "TIME_SERIES_DAILY";
-        let symbol = this.ticker;
+        let symbol = this.ticker.symbol;
+        // console.log(symbol);
         // let interval = "60min"
         let output_size = "full"
-        let apikey = "MHTLO8QSWV47YWUG";
+        let apikey = "XIW7BTPB24E0PU15";
 
         // return url+"function="+func+"&symbol="+symbol+"&interval="+interval+"&apikey="+apikey;
         return url+"function="+func+"&symbol="+symbol+"&outputsize="+output_size+"&apikey="+apikey;

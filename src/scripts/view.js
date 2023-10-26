@@ -4,126 +4,261 @@ import Security from "./security";
 class View {
     constructor(){
         const main = d3.select("#main"); 
-        this.main = main;
-        this.render(main)
+        this.render(main);
     }
 
     // This function will render our main screen and handle the logic to take input and direct the logic elsewhere
     
     render(main){
-    // Select the main element 
-    
-    
-    // Render the screen
-    main.style("height","500px")
+   
+    main.style("height","90vh")
         .style("width","70%")
         .style("border", "none")
-        .style("border-radius", "2%")
+        .style("border-radius", "1%")
         .style("background-color", "white")
         .style("box-shadow" ,"5px 5px 10px rgba(0, 0, 0, 0.5)");
+    
+    // const banner = main.append("banner")   
+    //                 .attr("id","banner")
+    //                 .style("width","100%");
+    
+    const search_container = main.append("div")
+                                 .attr("id","search_container")
+                                 .attr("position","relative")
+                                 .style("padding","20px")
+                                 .style("width","90%")
+                                 .style("height","10%");
 
-    // Render the welcome message   
-    // main.append("h1").text("Welcome")
-    //     .style("font-size", "30px")
-    //     .style("margin", "5px");
-    const search_container = main.append("div").attr("id","search_container").attr("position","relative")  ;
+    // const help_icon = search_container.append("button")
+    //                                   .text("help");
+
+
     const ticker_input = search_container.append("input")
-    .attr("id","search-input")
-        .attr("placeholder","Search...")
-        .style("border", "none")
-        .style("margin", "20px 20px")
-        .style("font-size","20px")
-        .style("padding", "10px 10px")
-        .style("text-transform","uppercase")
-        // .style("box-shadow" ,"5px 5px 10px rgba(0, 0, 0, 0.5)");
+                                         .attr("id","search-input")
+                                         .attr("placeholder","Input your ticker to get started...")
+                                         .style("width","50%")
+                                         .style("border", "1px solid grey")
+                                         .style("border-radius","15px")
+                                        //  .style("box-sizing","border-box")
+                                         .style("margin", "20px 20px")
+                                         .style("font-size","20px")
+                                         .style("padding", "10px 10px")
+                                         .style("box-shadow" ,"5px 5px 10px rgba(0, 0, 0, 0.5)")
+                                         .style("text-transform","uppercase");
+    const chart = main.append("div")
+                       .attr("id","chart")
+                       .style("height","80%")
+                       .style("margin-top","25px");
+                       
 
-    const svg = main.append("svg")
-        .style("margin","50px")
-        .attr("width","70%")
-        .attr("height","80%")
-        .style("overflow","visible")
-        // .style("border","1px solid black");
-    this.svg =svg;
-    ticker_input.on("keypress", this.handle_enter.bind(this)) //This is the original one to be restored if required 
-    // debugger
-    // ticker_input.on("keypress", this.search_ticker);
+    const svg = chart.append("svg")
+                    .attr("viewBox","0 0 800 400")
+                    .attr("preserveAspectRatio","none")
+                    // .attr("style","outline: thin solid black")
+                    // .style("border", "1px solid black") // temporary - let's remove it after some time 
+                    // .style("fill","none")
+                    
+                    .style("width","90%")
+                    .style("height","75%")
+                    .style("overflow","visible");
+
+
+     const footer = main.append("div")
+                        .attr("id","footer")
+                        .style("width", "100%")
+                        .style("background-color","beige")
+                        .style("height","10%")
+                        .style("border-top","2px solid grey")
+    
+    const links = d3.select("#footer")
+                    .append("div")
+                    .attr("id","links")
+                    .style("margin-left","20px");
+                    
+
+    links.append("a")
+         .attr("id","github")
+         .attr("href","https://github.com/imnotbalaji")
+         .attr("target","_blank")
+         .append("img")
+         .attr("src","./images/github.png")
+         .style("width","25px");
+
+    links.append("a")
+         .attr("id","github")
+         .attr("href","https://www.linkedin.com/in/balajiv1/")
+         .attr("target","_blank")
+         .append("img")
+         .attr("src","./images/linked_in.png")
+         .style("width","25px")
+
+
+
+    const openModal = d3.select("#footer")
+                        .append("button")
+                        .attr("id","Instructions")
+                        .text("User Guide")
+                        .style("margin-right","20px")
+
+    
+    
+    let user_guide = d3.select("#user-guide")
+    openModal.on("click", function(){
+        user_guide.style("display","block")
+    })
+
+    let close = d3.select(".close");
+
+    close.on("click", function(){
+        user_guide.style("display","none");
+    })
+
+    d3.select(window).on("click", function(event){
+        console.log(event.target);
+        console.log(user_guide.node())
+        if (event.target == user_guide.node()){
+            console.log("window clicked");
+            user_guide.style("display","none");
+
+        }
+    })
+
+
+
+
+            
+                  
+    
+    
+    
+    const bound_search_ticker = this.test_search_ticker.bind(this);
+    const debounced_search_ticker = this.debounce(bound_search_ticker,250);
+    
+    ticker_input.on("input", debounced_search_ticker);
+   
+    // -- tempoarary code 
+        // const dropdown = d3.select("#dropdown");
+        // ticker_input.on("input", function(event){
+        //     const value = event.target.value;
+        //     if (value === ""){
+        //         dropdown.attr("class","dropdown-hidden");
+
+        //     }else{
+        //         dropdown.attr("class","dropdown-visible");
+        //         debounced_search_ticker(event);
+
+        //     }
+
+        // });
+
+    /// -- trying it out 
+
     }
-    async search_ticker(event){
-        let main = this.main;
-        let svg = this.svg;
+    // ------------- Helper function to debounce;
+    debounce(callback, delay) {
+        let timeout;
+        return (arg) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(()=> callback(arg), delay);
+        }
+    }
 
-        if (event.key === "Enter") {
+    // --- look for the keyword
+    async test_search_ticker(event){
+        const keywords = event.target.value;
+        if (keywords !== "") {
+            // Construct the URL
             const base_url = "https://www.alphavantage.co/query?"
             const func = "SYMBOL_SEARCH";
-            const keywords = d3.select(event.target).property("value");
+            const keyword = d3.select(event.target).property("value");
             const data_type = "json"
-            const apikey = "MHTLO8QSWV47YWUG";
-            // const fetch_url = base_url + "function=" + func + "&keywords=" + keywords + "&datatype=" + data_type + "&apikey=" +apikey;
+            const apikey = "XIW7BTPB24E0PU15";
+            const fetch_url = base_url + "function=" + func + "&keywords=" + keyword + "&datatype=" + data_type + "&apikey=" +apikey;
+            // Make a fetch request and parse the json output 
+            const res = await fetch(fetch_url);
+            const tickers = await res.json();
+            // Call the dropdown with the inner data from the received json data
+            this.render_search_dropdown(tickers["bestMatches"]);
+        } else {
+            // Hide the dropdown if the input box is empty
+            const dropdown = d3.select("#dropdown");
+            dropdown.attr("class","dropdown-hidden");
+        }
 
-            // console.log(fetch_url);
-            // const res = await fetch(fetch_url);
-            // const list = await res.json();
-            // console.log(list);
+    }
 
-            const drop_down = d3.select("#search_container")
-            .append("div")
-            .attr("id", "dropdown")
-            .attr("position","absolute")
-            .attr("overflow-y","auto")
-            .style("border","1px solid black");
+    render_search_dropdown(dropdown_items_array) {
 
-            for (let i =0; i < 10;i++){
-            let drop_item = drop_down.append("div")
-                                     .attr("id",`div-${i}`);
-            drop_item
-            .attr("value",i)
-            .text("Hello"+i)
-            .style("background-color","grey");
-            drop_item
-            .on("click",()=>{
-                d3.select("#search-input").property("value",i);
-            } );
-            }
+        d3.select("#dropdown").remove();
+
+        const dropdown_items = dropdown_items_array.map((d)=> ({symbol: d["1. symbol"], name: d["2. name"]}));
+        console.log(dropdown_items);
+
+        const drop_down = d3.select("#search_container")
+                            .append("div")
+                            .attr("id", "dropdown")
+                            .style("position","absolute")
+                            .style("width","45%")
+                            .style("background-color","white")
+                            .attr("overflow-y","auto")
+                            .style("margin-left","5px")
+                            .style("margin-top","65px")
+                            .style("padding","10px 10px")
+                            // .style("box-sizing","border-box")
+                            .style("border","1px solid black")
+                            .style("border-radius", "15px");
+
+        const dropdownitems = drop_down.selectAll("div")
+                                       .data(dropdown_items)
+                                        .enter()
+                                        .append("div")
+                                        .attr('id','dropdown-item')
+                                        .attr("width", "30%")
+                                        .text(d=>`${d.symbol}      ${d.name}`);
+
+        dropdownitems.on("click",(event,d)=>{
+            d3.select("#search-input").property("value",d.symbol);
+            console.log(d);
+            this.render_chart_ticker(d);
             
+
+        })
+        
+
+    }
+    render_chart_ticker(ticker){
+        d3.select("#dropdown").remove();
+        let svg = d3.select("svg");
+        // debugger
+        const stock = new Security(ticker);
+        this.render_chart(stock,"All",svg);
+        this.show_zoom_buttons(stock);
+    }
+
+   
     
-        }
-    }
-    handle_click(event){
-        console.log(event.value);
-    }
-    handle_enter(event){
-        let main = this.main;
-        let svg = this.svg;
-        if (event.key === "Enter") {    
-            const ticker = d3.select(event.target).property("value");
-            const stock = new Security(ticker);
-            // debugger
-            this.render_chart(stock,"All",svg);
-            this.show_zoom_buttons(stock);
-        }
-    }
 
     render_chart(stock,selected_time_period,svg){
         new Chart(stock,selected_time_period, svg);
 
     }
     show_zoom_buttons(stock){
-        
-        let main = this.main;
-        let svg = this.svg;
+        // debugger
+        let chart = d3.select("#chart");
+        let svg = d3.select("svg");
 
         
         const time_period = ["All","10Y","5Y","2Y","1Y","6M","3M","1M"];
         let selected_time_period = time_period[0];
 
 
-        let zoom = main.select("#zoom");
+        let zoom = d3.select("#zoom");
 
 
         if (zoom.empty()) {
             // debugger
 
-            zoom = main.append("div")
+            zoom = chart.append("div")
                        .attr("id","zoom");
 
                 const zoom_out = zoom.append("img")
@@ -180,3 +315,6 @@ class View {
 }
 
 export default View;
+
+
+
