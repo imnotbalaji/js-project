@@ -3,12 +3,9 @@ class Chart {
     constructor(stock,time_period, svg) {
         this.time_period = time_period;
         this.data = stock.data;
-        console.log(time_period);
-        // debugger
-        // console.log(this.get_period(time_period));
+    
         stock.get_data().then((data_array)=> {
-            // this.render_bar(data_array,svg);
-            // debugger
+        
             this.render_line(data_array,this.get_period(time_period),svg);
         });
      
@@ -48,19 +45,16 @@ class Chart {
  
     render_line(received_data,time_period, svg){
         // debugger
-        console.log(time_period);
+        
       
         const formatTime = d3.timeFormat("%b-%y");
         
-        // const svg_width = svg.node().clientWidth;
-        // const svg_height = svg.node().clientHeight;
-        // console.log(svg_width);
-        // console.log(svg_height);
+        
 
         
 
         const margin = {top: 0, bottom:0};
-        console.log(margin.top);
+        
         
         
         const today = new Date();
@@ -78,8 +72,7 @@ class Chart {
 
         const end_value = data[data.length-1].value;
 
-        console.log(end_value);
-        console.log(start_value);
+        
 
         let chart_color;
         if (end_value > start_value) {
@@ -182,7 +175,7 @@ class Chart {
  
         // Line creation and transitions 
 
-        console.log(gradient);
+        
 
         let line_path = svg.select(".line-path");
                         

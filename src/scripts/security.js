@@ -1,6 +1,6 @@
 class Security {
     constructor(ticker){
-        console.log(ticker);
+
         this.ticker = ticker;
         this.data =  [30,80,45, 60, 121, 90, 15];   
     }
@@ -10,7 +10,7 @@ class Security {
 
         // We need this for the url fetching 
         let url = this.url_maker();
-        console.log(url);
+        
         const res = await fetch(url);
         const raw_data = await res.json();
         

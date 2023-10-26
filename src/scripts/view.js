@@ -18,9 +18,7 @@ class View {
         .style("background-color", "white")
         .style("box-shadow" ,"5px 5px 10px rgba(0, 0, 0, 0.5)");
     
-    // const banner = main.append("banner")   
-    //                 .attr("id","banner")
-    //                 .style("width","100%");
+
     
     const search_container = main.append("div")
                                  .attr("id","search_container")
@@ -29,9 +27,7 @@ class View {
                                  .style("width","90%")
                                  .style("height","10%");
 
-    // const help_icon = search_container.append("button")
-    //                                   .text("help");
-
+ 
 
     const ticker_input = search_container.append("input")
                                          .attr("id","search-input")
@@ -45,10 +41,27 @@ class View {
                                          .style("padding", "10px 10px")
                                          .style("box-shadow" ,"5px 5px 10px rgba(0, 0, 0, 0.5)")
                                          .style("text-transform","uppercase");
+    
     const chart = main.append("div")
                        .attr("id","chart")
                        .style("height","80%")
-                       .style("margin-top","25px");
+                       .style("margin-top","25px")
+                       .attr("position","absolute")
+
+
+    
+    const home_page = chart.append("img")
+                            .attr("id","home_page")
+                            .attr("src","./images/Home_page.png")
+                            .style("height","90%")
+                            .style("width","90%")
+                            // .style("position","relative")
+                            .style("margin-top","0px");
+
+    
+                    
+    
+                       
                        
 
     const svg = chart.append("svg")
@@ -58,8 +71,8 @@ class View {
                     // .style("border", "1px solid black") // temporary - let's remove it after some time 
                     // .style("fill","none")
                     
-                    .style("width","90%")
-                    .style("height","75%")
+                    .style("width","0%")
+                    .style("height","0%")
                     .style("overflow","visible");
 
 
@@ -114,10 +127,9 @@ class View {
     })
 
     d3.select(window).on("click", function(event){
-        console.log(event.target);
-        console.log(user_guide.node())
+        
         if (event.target == user_guide.node()){
-            console.log("window clicked");
+            
             user_guide.style("display","none");
 
         }
@@ -136,22 +148,7 @@ class View {
     
     ticker_input.on("input", debounced_search_ticker);
    
-    // -- tempoarary code 
-        // const dropdown = d3.select("#dropdown");
-        // ticker_input.on("input", function(event){
-        //     const value = event.target.value;
-        //     if (value === ""){
-        //         dropdown.attr("class","dropdown-hidden");
-
-        //     }else{
-        //         dropdown.attr("class","dropdown-visible");
-        //         debounced_search_ticker(event);
-
-        //     }
-
-        // });
-
-    /// -- trying it out 
+    
 
     }
     // ------------- Helper function to debounce;
@@ -192,7 +189,7 @@ class View {
         d3.select("#dropdown").remove();
 
         const dropdown_items = dropdown_items_array.map((d)=> ({symbol: d["1. symbol"], name: d["2. name"]}));
-        console.log(dropdown_items);
+        
 
         const drop_down = d3.select("#search_container")
                             .append("div")
@@ -218,7 +215,7 @@ class View {
 
         dropdownitems.on("click",(event,d)=>{
             d3.select("#search-input").property("value",d.symbol);
-            console.log(d);
+            
             this.render_chart_ticker(d);
             
 
@@ -228,7 +225,10 @@ class View {
     }
     render_chart_ticker(ticker){
         d3.select("#dropdown").remove();
+        d3.select("#home_page").remove();
         let svg = d3.select("svg");
+        svg.style("width","80%")
+            .style("height","75%")
         // debugger
         const stock = new Security(ticker);
         this.render_chart(stock,"All",svg);
